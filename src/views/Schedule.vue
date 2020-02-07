@@ -3,74 +3,98 @@
     <v-layout wrap>
       <v-row class="fill-height">
         <v-col>
-          <v-sheet height="64">
-            <v-toolbar flat color="white">
-              <v-btn outlined class="mr-4" @click="setToday">
-                Today
-              </v-btn>
-              <v-btn fab text small @click="prev">
-                <v-icon small>mdi-chevron-left</v-icon>
-              </v-btn>
-              <v-btn fab text small @click="next">
-                <v-icon small>mdi-chevron-right</v-icon>
-              </v-btn>
-              <v-toolbar-title>{{ title }}</v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-menu bottom right>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    outlined
-                    v-on="on"
-                  >
-                    <span>{{ typeToLabel[type] }}</span>
-                    <v-icon right>mdi-menu-down</v-icon>
+          <v-card class="pa-5">
+            <v-card-title>Calendar</v-card-title>
+            <v-card-text>
+              <v-sheet height="64">
+                <v-toolbar flat color="white">
+                  <v-btn fab text small @click="prev">
+                    <v-icon small>mdi-chevron-left</v-icon>
                   </v-btn>
-                </template>
-                <v-list>
-                  <v-list-item @click="type = 'day'">
-                    <v-list-item-title>Day</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="type = 'week'">
-                    <v-list-item-title>Week</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="type = 'month'">
-                    <v-list-item-title>Month</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item @click="type = '4day'">
-                    <v-list-item-title>4 days</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-toolbar>
-          </v-sheet>
-          <v-sheet height="600">
-            <v-calendar
-              ref="calendar"
-              color="primary"
-              :events="schedule"
-              :event-color="getEventColor"
-              :type="type"
-              :weekdays="[1,2,3,4,5,6,0]"
-              :first-interval="7"
-              :interval-count="17"
-              locale="fr"
-              @click:more="viewDay"
-              @click:date="viewDay"
-              @change="updateRange">
-              <template slot="event" slot-scope="day">
-                <div class="pl-1">
-                  <template v-if="type === 'month'">
-                    <strong>{{ day.event.start.substr(-5) }}</strong> {{ day.event.name }}
+                  <v-btn fab text small @click="next">
+                    <v-icon small>mdi-chevron-right</v-icon>
+                  </v-btn>
+                  <v-toolbar-title>{{ title }}</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-menu bottom right>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        outlined
+                        v-on="on"
+                      >
+                        <span>{{ typeToLabel[type] }}</span>
+                        <v-icon right>mdi-menu-down</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="type = 'day'">
+                        <v-list-item-title>Day</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="type = 'week'">
+                        <v-list-item-title>Week</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="type = 'month'">
+                        <v-list-item-title>Month</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-toolbar>
+              </v-sheet>
+              <v-sheet height="600">
+                <v-calendar
+                  ref="calendar"
+                  v-model="value"
+                  :weekdays="[1,2,3,4,5,6,0]"
+                  :first-interval="7"
+                  :interval-count="17"
+                  :type="type"
+                  :events="schedule"
+                  :event-overlap-mode="mode"
+                  :event-overlap-threshold="30"
+                  :event-color="getEventColor">
+                  <template slot="event" slot-scope="day">
+                    <div class="pl-1">
+                      <template v-if="type === 'month'">
+                        <strong>{{ day.event.start.substr(-5) }}</strong> {{ day.event.name }}
+                      </template>
+                      <template v-else>
+                        {{ day.event.name }}<br>
+                        <strong>{{ day.event.start.substr(-5) }}</strong> - <strong>{{ day.event.end.substr(-5) }}</strong><br>
+                        {{ day.event.teacher }}
+                      </template>
+                    </div>
                   </template>
-                  <template v-else>
-                    {{ day.event.name }}<br>
-                    <strong>{{ day.event.start.substr(-5) }}</strong> - <strong>{{ day.event.end.substr(-5) }}</strong><br>
-                    {{ day.event.teacher }}
+                </v-calendar>
+                <!--<v-calendar
+                  ref="calendar"
+                  color="primary"
+                  :events="schedule"
+                  :event-color="getEventColor"
+                  :type="type"
+                  :now="today"
+                  :weekdays="[1,2,3,4,5,6,0]"
+                  :first-interval="7"
+                  :interval-count="17"
+                  locale="fr"
+                  @click:more="viewDay"
+                  @click:date="viewDay"
+                  @change="updateRange">
+                  <template slot="event" slot-scope="day">
+                    <div class="pl-1">
+                      <template v-if="type === 'month'">
+                        <strong>{{ day.event.start.substr(-5) }}</strong> {{ day.event.name }}
+                      </template>
+                      <template v-else>
+                        {{ day.event.name }}<br>
+                        <strong>{{ day.event.start.substr(-5) }}</strong> - <strong>{{ day.event.end.substr(-5) }}</strong><br>
+                        {{ day.event.teacher }}
+                      </template>
+                    </div>
                   </template>
-                </div>
-              </template>
-            </v-calendar>
-          </v-sheet>
+                </v-calendar>-->
+              </v-sheet>
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
       <!--<v-row>
@@ -100,15 +124,16 @@ import { mapActions, mapState } from 'vuex'
 export default {
   name: 'Schedule',
   data: () => ({
-    type: 'month',
+    type: 'week',
     typeToLabel: {
       month: 'Month',
       week: 'Week',
-      day: 'Day',
-      '4day': '4 Days'
+      day: 'Day'
     },
+    today: new Date().toISOString().substr(0, 10),
     start: null,
     end: null,
+    value: '',
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false
@@ -116,40 +141,7 @@ export default {
   computed: {
     ...mapState([
       'schedule'
-    ]),
-    title () {
-      const { start, end } = this
-      if (!start || !end) {
-        return ''
-      }
-
-      const startMonth = this.monthFormatter(start)
-      const endMonth = this.monthFormatter(end)
-      const suffixMonth = startMonth === endMonth ? '' : endMonth
-
-      const startYear = start.year
-      const endYear = end.year
-      const suffixYear = startYear === endYear ? '' : endYear
-
-      const startDay = start.day + this.nth(start.day)
-      const endDay = end.day + this.nth(end.day)
-
-      switch (this.type) {
-        case 'month':
-          return `${startMonth.charAt(0).toUpperCase() + startMonth.slice(1)} ${startYear}`
-        case 'week':
-        case '4day':
-          return `${startMonth.charAt(0).toUpperCase() + startMonth.slice(1)} ${startDay} ${startYear} - ${suffixMonth} ${endDay} ${suffixYear}`
-        case 'day':
-          return `${startMonth.charAt(0).toUpperCase() + startMonth.slice(1)}${startDay} ${startYear}`
-      }
-      return ''
-    },
-    monthFormatter () {
-      return this.$refs.calendar.getFormatter({
-        timeZone: 'UTC', month: 'long'
-      })
-    }
+    ])
   },
   methods: {
     ...mapActions([

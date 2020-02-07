@@ -1,6 +1,26 @@
 <template>
-  <v-container>
-    <v-layout wrap>
+  <div>
+    <v-row justify="center" class="hidden-md-and-up">
+      <v-col cols="12">
+        <v-list three-line>
+          <template v-for="document in documents">
+            <v-list-item :key="document.name" @click="downloadFile(document.link, document.name)">
+              <v-list-item-avatar>
+                <v-icon>mdi-file-outline</v-icon>
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-title v-text="document.name"></v-list-item-title>
+                <v-list-item-subtitle><b>{{document.teacher}}</b> - {{document.uploaded}}</v-list-item-subtitle>
+                <v-list-item-subtitle v-html="document.description"></v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider :key="document.name + '_divider'"></v-divider>
+          </template>
+        </v-list>
+      </v-col>
+    </v-row>
+    <v-container class="hidden-sm-and-down">
       <v-row justify="center">
         <v-col cols="12">
           <v-card>
@@ -35,9 +55,10 @@
           </v-card>
         </v-col>
       </v-row>
-    </v-layout>
-  </v-container>
+    </v-container>
+  </div>
 </template>
+
 <script>
 import { baseUrl } from '@/main'
 import { mapActions, mapState } from 'vuex'
@@ -51,7 +72,7 @@ export default {
       { text: 'Teacher', value: 'teacher' },
       { text: 'Date', value: 'date' },
       { text: 'Description', value: 'description' },
-      { text: 'Uploaded at', value: 'uploaded' },
+      { text: 'Uploaded', value: 'uploaded' },
       { text: 'Document', value: 'name' },
       { text: 'Actions', value: 'action', sortable: false }
     ],
