@@ -67,11 +67,13 @@ export default new Vuex.Store({
           if (course) {
             commit('setAuth', btoa(username) + '||' + btoa(password) + '||' + btoa(course.course_id) + '||' + btoa(course.classroom_id))
             commit('setSettings', course)
+            commit('setDisplayName', course.displayName)
           }
         })
     },
     fetchAuthToken ({ commit }) {
       commit('setAuth', localStorage.getItem('auth'))
+      commit('setDisplayName', localStorage.getItem('name'))
     }
   },
   mutations: {
@@ -92,6 +94,12 @@ export default new Vuex.Store({
         state.auth = auth
         axios.defaults.headers.common['Authorization'] = auth
         localStorage.setItem('auth', auth)
+      }
+    },
+    setDisplayName: (state, name) => {
+      if (name) {
+        state.displayName = name
+        localStorage.setItem('name', name)
       }
     },
     setSettings: (state, payload) => {

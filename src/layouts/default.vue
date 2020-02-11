@@ -27,6 +27,23 @@
     <v-app-bar app clipped-left color="primary">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Unofficial Sawi Student Portal</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-menu offset-y flat>
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on">
+            <v-icon left size="small">mdi-account</v-icon>
+            <span>{{ displayName }}</span>
+          </v-btn>
+        </template>
+        <v-list tile>
+          <v-list-item-group dense>
+            <v-list-item @click="logout">
+              <v-list-item-avatar><v-icon>mdi-logout-variant</v-icon></v-list-item-avatar>
+              <v-list-item-content>Logout</v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
@@ -45,6 +62,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'defaultLayout',
   components: {
@@ -61,7 +80,16 @@ export default {
       { title: 'Absence', icon: 'mdi-account-off', link: '' },
       { title: 'Notes', icon: 'mdi-message-draw', link: '' }
     ]
-  })
+  }),
+  computed: {
+    ...mapState(['displayName'])
+  },
+  methods: {
+    logout () {
+      localStorage.removeItem('auth')
+      this.$router.push('/login')
+    }
+  }
 }
 </script>
 

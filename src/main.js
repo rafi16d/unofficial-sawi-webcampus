@@ -9,7 +9,7 @@ import axios from 'axios'
 
 Vue.config.productionTip = false
 
-export const baseUrl = 'https://sawi-api.flopy.ch'
+export const baseUrl = 'http://localhost:8089'
 
 axios.interceptors.request.use(function (config) {
   return config
